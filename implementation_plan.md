@@ -16,7 +16,7 @@ Aplicação web completa para **cadastro e gerenciamento de livros** de uma bibl
 - Cadastro e autenticação de usuários
 - Gerenciamento de sessão
 - Interface web responsiva
-- Integração com API externa (ex: Open Library API para buscar dados de livros por ISBN)
+- Integração com API externa (API dos Correios / ViaCEP para consulta de endereço por CEP)
 - Pipeline de qualidade automatizado
 
 ---
@@ -34,11 +34,11 @@ Aplicação web completa para **cadastro e gerenciamento de livros** de uma bibl
 | **RF-07** | Editar Livro | Atualizar dados de um livro existente | Alta |
 | **RF-08** | Excluir Livro | Remover livro da biblioteca | Alta |
 | **RF-09** | Detalhes do Livro | Visualizar informações completas de um livro | Média |
-| **RF-10** | Busca por ISBN (API) | Preencher dados do livro automaticamente via Open Library API | Média |
+| **RF-10** | Consulta de CEP (API) | Preencher endereço do usuário automaticamente via API dos Correios (ViaCEP) no cadastro | Média |
 | **RF-11** | Validação de Dados | Validar campos obrigatórios e formatos (ex: ISBN) | Alta |
 
 > [!IMPORTANT]
-> O **RF-10** (Busca por ISBN) existe para justificar o uso de **WireMock/VCR** — sem uma chamada a API externa, não haveria motivo para essa ferramenta.
+> O **RF-10** (Consulta de CEP) existe para justificar o uso de **WireMock/VCR** — sem uma chamada a API externa, não haveria motivo para essa ferramenta. A API dos Correios (via ViaCEP) retorna logradouro, bairro, cidade e estado a partir do CEP, otimizando o cadastro do usuário.
 
 ---
 
@@ -61,7 +61,7 @@ Aplicação web completa para **cadastro e gerenciamento de livros** de uma bibl
 RF-01 (Cadastro) ──► RNF-05 (Segurança): senha deve ser hasheada com BCrypt
 RF-02 (Login)    ──► RNF-05 (Segurança): sessão com cookie HttpOnly
 RF-04 (Criar)    ──► RNF-01 (Testabilidade): testado com Testcontainers (banco real)
-RF-10 (ISBN API) ──► RNF-01 (Testabilidade): testado com WireMock/VCR (sem mock)
+RF-10 (CEP API)  ──► RNF-01 (Testabilidade): testado com WireMock/VCR (sem mock)
 RF-11 (Validação)──► RNF-01 (Testabilidade): testes parametrizados (@CsvSource)
 TODOS os RFs     ──► RNF-07 (Rastreabilidade): mapeados no RTM.md
 TODOS os RFs     ──► RNF-03 (CI/CD): validados automaticamente no pipeline
@@ -120,10 +120,10 @@ TODOS os RFs     ──► RNF-03 (CI/CD): validados automaticamente no pipeline
 
 | | Detalhe |
 |---|---------|
-| **Por que SIM** | Implementa o padrão VCR (Record & Playback): grava chamadas reais à Open Library API em arquivos JSON ("cassettes") e reproduz nas execuções seguintes. Testes determinísticos sem depender de rede |
+| **Por que SIM** | Implementa o padrão VCR (Record & Playback): grava chamadas reais à API dos Correios (ViaCEP) em arquivos JSON ("cassettes") e reproduz nas execuções seguintes. Testes determinísticos sem depender de rede |
 | **Por que não Mockito/mocks manuais** | **Proibido pelo professor.** WireMock roda um servidor HTTP real, não é um mock — é um stub baseado em gravações reais |
 | **Por que não OkHttp MockWebServer** | WireMock tem integração nativa com Spring Boot (`wiremock-spring-boot`), suporte a recording, e ecossistema mais maduro |
-| **Conexão com RF** | Viabiliza RF-10 (busca ISBN) sem depender de internet nos testes |
+| **Conexão com RF** | Viabiliza RF-10 (consulta CEP) sem depender de internet nos testes |
 
 ### 4.7 Cobertura: JaCoCo
 
@@ -185,7 +185,7 @@ biblioteca-pessoal/
 │   │   │   │   ├── UserService.java          # Lógica de negócio
 │   │   │   │   ├── BookService.java
 │   │   │   │   ├── BookValidator.java        # Validações
-│   │   │   │   └── IsbnLookupService.java    # Chamada Open Library
+│   │   │   │   └── CepLookupService.java     # Chamada API Correios (ViaCEP)
 │   │   │   └── dto/
 │   │   │       ├── BookDTO.java
 │   │   │       └── UserDTO.java
@@ -208,7 +208,7 @@ biblioteca-pessoal/
 │   │   │   ├── integration/                  # Testes de Integração
 │   │   │   │   ├── BookRepositoryIT.java     # Testcontainers
 │   │   │   │   ├── UserRepositoryIT.java
-│   │   │   │   └── IsbnLookupServiceIT.java  # WireMock/VCR
+│   │   │   │   └── CepLookupServiceIT.java   # WireMock/VCR
 │   │   │   ├── controller/                   # Caixa Preta (E2E)
 │   │   │   │   ├── BookControllerTest.java
 │   │   │   │   └── AuthControllerTest.java
@@ -218,7 +218,7 @@ biblioteca-pessoal/
 │   │   │   │   └── UserServiceTest.java
 │   │   │   └── parametrized/                 # Testes Parametrizados
 │   │   │       ├── BookValidationParamTest.java
-│   │   │       └── IsbnFormatParamTest.java
+│   │   │       └── CepFormatParamTest.java
 │   │   └── resources/
 │   │       └── wiremock/                     # "Cassettes" VCR
 │   │           ├── mappings/
@@ -243,22 +243,24 @@ biblioteca-pessoal/
 | **Repository** | Integração | Testcontainers + MongoDB | `BookRepositoryIT`: CRUD real no banco |
 | **Service** | Caixa Branca (unitário) | JUnit 5 + Testcontainers | `BookServiceTest`: lógica de negócio com banco real |
 | **Service** | Parametrizado | JUnit 5 `@ParameterizedTest` | `BookValidationParamTest`: múltiplos cenários de validação |
-| **Service (API)** | Integração VCR | WireMock | `IsbnLookupServiceIT`: replay de chamadas à Open Library |
+| **Service (API)** | Integração VCR | WireMock | `CepLookupServiceIT`: replay de chamadas à API dos Correios (ViaCEP) |
 | **Controller** | Caixa Preta (E2E) | SpringBootTest + TestRestTemplate | `BookControllerTest`: requisições HTTP reais |
 
 ### 6.2 Exemplo Conceitual: Testes Parametrizados
 
 ```java
-@ParameterizedTest(name = "ISBN \"{0}\" → válido={1}")
+@ParameterizedTest(name = "CEP \"{0}\" → válido={1}")
 @CsvSource({
-    "978-3-16-148410-0, true",    // ISBN-13 válido
-    "0-306-40615-2, true",        // ISBN-10 válido
-    "123, false",                  // Muito curto
-    "'', false",                   // Vazio
-    "978-0-00-000000-0, false"    // Checksum inválido
+    "01001-000, true",     // CEP válido (São Paulo - Praça da Sé)
+    "80010-000, true",     // CEP válido (Curitiba)
+    "00000-000, false",    // CEP inválido (zeros)
+    "'', false",           // Vazio
+    "1234, false",         // Muito curto
+    "12345-6789, false",   // Formato inválido (dígitos extras)
+    "ABCDE-FGH, false"    // Letras não permitidas
 })
-void deveValidarFormatoIsbn(String isbn, boolean esperado) {
-    assertEquals(esperado, validator.isValidIsbn(isbn));
+void deveValidarFormatoCep(String cep, boolean esperado) {
+    assertEquals(esperado, validator.isValidCep(cep));
 }
 ```
 
@@ -295,7 +297,7 @@ class BookRepositoryIT {
 ```java
 @SpringBootTest
 @EnableWireMock
-class IsbnLookupServiceIT {
+class CepLookupServiceIT {
 
     @InjectWireMock
     private WireMockServer wireMock;
@@ -304,10 +306,13 @@ class IsbnLookupServiceIT {
     // Execuções seguintes: reproduz do arquivo (sem rede)
 
     @Test
-    void deveBuscarLivroPorIsbn() {
-        // WireMock serve a resposta gravada da Open Library API
-        BookInfo info = isbnLookupService.buscarPorIsbn("978-0-14-028329-7");
-        assertEquals("The Great Gatsby", info.getTitle());
+    void deveBuscarEnderecoPorCep() {
+        // WireMock serve a resposta gravada da API dos Correios (ViaCEP)
+        EnderecoInfo endereco = cepLookupService.buscarPorCep("01001-000");
+        assertEquals("Praça da Sé", endereco.getLogradouro());
+        assertEquals("Sé", endereco.getBairro());
+        assertEquals("São Paulo", endereco.getLocalidade());
+        assertEquals("SP", endereco.getUf());
     }
 }
 ```
@@ -467,7 +472,7 @@ sonar-maven-plugin
 | Model + Repository (User, Book) | Membro A |
 | Service layer (BookService, UserService, Validator) | Membro B |
 | Controller layer + Spring Security | Membro C |
-| IsbnLookupService (Open Library API) | Membro B |
+| CepLookupService (API Correios / ViaCEP) | Membro B |
 
 ### Fase 3 — Frontend (Semana 3)
 | Tarefa | Responsável |
@@ -480,7 +485,7 @@ sonar-maven-plugin
 | Tarefa | Responsável |
 |--------|-------------|
 | Testes de integração - Repository (Testcontainers) | Membro A |
-| Testes WireMock/VCR (IsbnLookupService) | Membro B |
+| Testes WireMock/VCR (CepLookupService) | Membro B |
 | Testes parametrizados (validações) | Membro B |
 | Testes caixa branca (Service) | Membro A |
 | Testes caixa preta (Controller E2E) | Membro C |
@@ -518,8 +523,8 @@ sonar-maven-plugin
 > **Perguntas para alinhar com o trio antes de começar:**
 
 1. **Nome do repositório GitHub** — sugestão: `biblioteca-pessoal` ou `personal-library`?
-2. **Qual API externa usar para ISBN?** — Sugiro [Open Library API](https://openlibrary.org/dev/docs/api/books) (gratuita, sem chave). Outra opção seria Google Books API (requer API key).
-3. **Branch strategy** — `main` + `develop` + feature branches, ou apenas `main` + feature branches?
-4. **SonarCloud vs SonarQube self-hosted?** — SonarCloud é mais simples (gratuito para open-source). O professor exige self-hosted?
-5. **Escopo do frontend** — Apenas funcional ou querem investir em UX premium (animações, dark mode)?
-6. **Distribuição dos membros** — A tabela da Seção 10 é uma sugestão. Quem fica com o quê?
+2. **Branch strategy** — `main` + `develop` + feature branches, ou apenas `main` + feature branches?
+3. **SonarCloud vs SonarQube self-hosted?** — SonarCloud é mais simples (gratuito para open-source). O professor exige self-hosted?
+4. **Escopo do frontend** — Apenas funcional ou querem investir em UX premium (animações, dark mode)?
+5. **Distribuição dos membros** — A tabela da Seção 10 é uma sugestão. Quem fica com o quê?
+6. **Campos de endereço no cadastro** — Quais campos de endereço devem ser preenchidos automaticamente via CEP? Sugestão: logradouro, bairro, cidade, UF (o usuário preenche apenas número e complemento).
