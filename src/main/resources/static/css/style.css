@@ -1,0 +1,53 @@
+/* Biblioteca Pessoal — Customizações sobre Bootstrap 5 */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Badges de status de leitura */
+.badge.bg-info { background-color: #0dcaf0 !important; }
+.badge.bg-warning { background-color: #ffc107 !important; }
+.badge.bg-success { background-color: #198754 !important; }
+
+/* Botões com tamanho mínimo acessível (RNF-04 CV-05) */
+.btn {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.btn-sm {
+    min-height: 36px;
+    min-width: 36px;
+}
+
+/* Card shadow */
+.card.shadow {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+/* Tabela hover */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Login/Register centering */
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .btn-group .btn {
+        padding: 0.4rem 0.6rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}

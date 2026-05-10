@@ -1,0 +1,20 @@
+# Configuração para testes — Testcontainers fornece MongoDB automaticamente
+spring:
+  data:
+    mongodb:
+      # URI injetada por Testcontainers via @DynamicPropertySource
+      database: biblioteca-test
+
+  thymeleaf:
+    cache: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+      timeout: 30m
+
+viacep:
+  api:
+    url: http://localhost:${wiremock.server.port:-8089}/ws/

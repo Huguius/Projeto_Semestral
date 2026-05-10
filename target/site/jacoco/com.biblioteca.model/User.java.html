@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Biblioteca Pessoal</a> &gt; <a href="index.source.html" class="el_package">com.biblioteca.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.biblioteca.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Entidade Usuário — documento MongoDB.
+ * Implementa UserDetails do Spring Security para autenticação (RF-02 seção 6).
+ * Conforme RF-01 seção 9.
+ */
+@Document(&quot;users&quot;)
+public class User implements UserDetails {
+
+    @Id
+    private String id;
+
+    private String nome;
+
+    @Indexed(unique = true)
+    private String email;
+
+    private String senhaHash;
+
+    private Endereco endereco;
+
+    private LocalDateTime dataCriacao;
+
+<span class="fc" id="L36">    public User() {</span>
+<span class="fc" id="L37">    }</span>
+
+<span class="fc" id="L39">    public User(String nome, String email, String senhaHash, Endereco endereco) {</span>
+<span class="fc" id="L40">        this.nome = nome;</span>
+<span class="fc" id="L41">        this.email = email;</span>
+<span class="fc" id="L42">        this.senhaHash = senhaHash;</span>
+<span class="fc" id="L43">        this.endereco = endereco;</span>
+<span class="fc" id="L44">        this.dataCriacao = LocalDateTime.now();</span>
+<span class="fc" id="L45">    }</span>
+
+    // --- UserDetails ---
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="nc" id="L51">        return List.of(new SimpleGrantedAuthority(&quot;ROLE_USER&quot;));</span>
+    }
+
+    @Override
+    public String getPassword() {
+<span class="nc" id="L56">        return senhaHash;</span>
+    }
+
+    @Override
+    public String getUsername() {
+<span class="fc" id="L61">        return email;</span>
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+<span class="nc" id="L66">        return true;</span>
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+<span class="nc" id="L71">        return true;</span>
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+<span class="nc" id="L76">        return true;</span>
+    }
+
+    @Override
+    public boolean isEnabled() {
+<span class="nc" id="L81">        return true;</span>
+    }
+
+    // --- Getters e Setters ---
+
+    public String getId() {
+<span class="fc" id="L87">        return id;</span>
+    }
+
+    public void setId(String id) {
+<span class="fc" id="L91">        this.id = id;</span>
+<span class="fc" id="L92">    }</span>
+
+    public String getNome() {
+<span class="fc" id="L95">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="nc" id="L99">        this.nome = nome;</span>
+<span class="nc" id="L100">    }</span>
+
+    public String getEmail() {
+<span class="nc" id="L103">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="nc" id="L107">        this.email = email;</span>
+<span class="nc" id="L108">    }</span>
+
+    public String getSenhaHash() {
+<span class="fc" id="L111">        return senhaHash;</span>
+    }
+
+    public void setSenhaHash(String senhaHash) {
+<span class="nc" id="L115">        this.senhaHash = senhaHash;</span>
+<span class="nc" id="L116">    }</span>
+
+    public Endereco getEndereco() {
+<span class="nc" id="L119">        return endereco;</span>
+    }
+
+    public void setEndereco(Endereco endereco) {
+<span class="nc" id="L123">        this.endereco = endereco;</span>
+<span class="nc" id="L124">    }</span>
+
+    public LocalDateTime getDataCriacao() {
+<span class="nc" id="L127">        return dataCriacao;</span>
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+<span class="fc" id="L131">        this.dataCriacao = dataCriacao;</span>
+<span class="fc" id="L132">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

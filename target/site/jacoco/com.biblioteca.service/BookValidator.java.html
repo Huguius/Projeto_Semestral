@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Biblioteca Pessoal</a> &gt; <a href="index.source.html" class="el_package">com.biblioteca.service</a> &gt; <span class="el_source">BookValidator.java</span></div><h1>BookValidator.java</h1><pre class="source lang-java linenums">package com.biblioteca.service;
+
+import com.biblioteca.dto.BookDTO;
+import com.biblioteca.exception.ValidationException;
+import org.springframework.stereotype.Component;
+
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Validador de dados de livro.
+ * Classe separada conforme SRP (RNF-08 seção 4).
+ * Coleta TODOS os erros antes de lançar exceção (RF-11 CA-08).
+ */
+@Component
+<span class="fc" id="L17">public class BookValidator {</span>
+
+    /**
+     * Valida os dados do livro conforme RF-11 seção 3.1.
+     * Lança ValidationException com lista de erros se houver problemas.
+     */
+    public void validar(BookDTO dto) {
+<span class="fc" id="L24">        List&lt;String&gt; erros = new ArrayList&lt;&gt;();</span>
+
+        // Título: obrigatório, 1-255 caracteres (RF-04 RN-01)
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (isBlank(dto.getTitulo())) {</span>
+<span class="fc" id="L28">            erros.add(&quot;Título é obrigatório&quot;);</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        } else if (dto.getTitulo().length() &gt; 255) {</span>
+<span class="fc" id="L30">            erros.add(&quot;Título muito longo (máximo 255 caracteres)&quot;);</span>
+        }
+
+        // Autor: obrigatório, 2-255 caracteres (RF-04 RN-02)
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        if (isBlank(dto.getAutor()) || dto.getAutor().trim().length() &lt; 2) {</span>
+<span class="fc" id="L35">            erros.add(&quot;Autor é obrigatório (mínimo 2 caracteres)&quot;);</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        } else if (dto.getAutor().length() &gt; 255) {</span>
+<span class="nc" id="L37">            erros.add(&quot;Autor muito longo (máximo 255 caracteres)&quot;);</span>
+        }
+
+        // ISBN: opcional; se informado, validar formato (RF-04 RN-03)
+<span class="fc bfc" id="L41" title="All 4 branches covered.">        if (dto.getIsbn() != null &amp;&amp; !dto.getIsbn().isEmpty()) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            if (!isValidIsbn(dto.getIsbn())) {</span>
+<span class="fc" id="L43">                erros.add(&quot;Formato de ISBN inválido&quot;);</span>
+            }
+        }
+
+        // Ano de publicação: opcional; se informado, entre 1450 e ano atual (RF-04 RN-04)
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (dto.getAnoPublicacao() != null) {</span>
+<span class="fc" id="L49">            int anoAtual = Year.now().getValue();</span>
+<span class="fc bfc" id="L50" title="All 4 branches covered.">            if (dto.getAnoPublicacao() &lt; 1450 || dto.getAnoPublicacao() &gt; anoAtual) {</span>
+<span class="fc" id="L51">                erros.add(&quot;Ano de publicação inválido&quot;);</span>
+            }
+        }
+
+        // Gênero: opcional, máximo 100 caracteres
+<span class="pc bpc" id="L56" title="1 of 4 branches missed.">        if (dto.getGenero() != null &amp;&amp; dto.getGenero().length() &gt; 100) {</span>
+<span class="nc" id="L57">            erros.add(&quot;Gênero muito longo (máximo 100 caracteres)&quot;);</span>
+        }
+
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (!erros.isEmpty()) {</span>
+<span class="fc" id="L61">            throw new ValidationException(erros);</span>
+        }
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Valida formato de CEP: 8 dígitos numéricos, não todos zeros.
+     * Conforme RF-11 CA-03, RF-11 seção 3.2.
+     */
+    public boolean isValidCep(String cep) {
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        if (cep == null || cep.isEmpty()) {</span>
+<span class="fc" id="L71">            return false;</span>
+        }
+<span class="fc" id="L73">        String cepLimpo = cep.replaceAll(&quot;[^0-9]&quot;, &quot;&quot;);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (cepLimpo.length() != 8) {</span>
+<span class="fc" id="L75">            return false;</span>
+        }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return !cepLimpo.matches(&quot;^0+$&quot;);</span>
+    }
+
+    /**
+     * Valida formato ISBN-10 ou ISBN-13.
+     * ISBN-10: 10 dígitos (último pode ser X).
+     * ISBN-13: 13 dígitos.
+     */
+    public boolean isValidIsbn(String isbn) {
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if (isbn == null || isbn.isEmpty()) {</span>
+<span class="nc" id="L87">            return false;</span>
+        }
+<span class="fc" id="L89">        String isbnLimpo = isbn.replaceAll(&quot;[\\s-]&quot;, &quot;&quot;);</span>
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (isbnLimpo.length() == 10) {</span>
+<span class="fc" id="L92">            return isbnLimpo.matches(&quot;^\\d{9}[\\dXx]$&quot;);</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        } else if (isbnLimpo.length() == 13) {</span>
+<span class="fc" id="L94">            return isbnLimpo.matches(&quot;^\\d{13}$&quot;);</span>
+        }
+<span class="fc" id="L96">        return false;</span>
+    }
+
+    private boolean isBlank(String value) {
+<span class="fc bfc" id="L100" title="All 4 branches covered.">        return value == null || value.trim().isEmpty();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.biblioteca.controller.HomeControllerTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.056 s <<< FAILURE! -- in com.biblioteca.controller.HomeControllerTest
+com.biblioteca.controller.HomeControllerTest.deveRedirecionarParaBooksQuandoAutenticado -- Time elapsed: 0.036 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: "redirect:/books"
+ but was: "redirect:/login"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at com.biblioteca.controller.HomeControllerTest.deveRedirecionarParaBooksQuandoAutenticado(HomeControllerTest.java:22)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

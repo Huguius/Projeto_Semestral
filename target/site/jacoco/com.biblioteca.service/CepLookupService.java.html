@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CepLookupService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Biblioteca Pessoal</a> &gt; <a href="index.source.html" class="el_package">com.biblioteca.service</a> &gt; <span class="el_source">CepLookupService.java</span></div><h1>CepLookupService.java</h1><pre class="source lang-java linenums">package com.biblioteca.service;
+
+import com.biblioteca.dto.EnderecoInfo;
+import com.biblioteca.exception.ApiIndisponivelException;
+import com.biblioteca.exception.CepInvalidoException;
+import com.biblioteca.exception.CepNaoEncontradoException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
+
+/**
+ * Serviço de consulta de CEP via API ViaCEP.
+ * Conforme RF-10 seção 9.
+ */
+@Service
+public class CepLookupService {
+
+<span class="nc" id="L23">    private static final Logger log = LoggerFactory.getLogger(CepLookupService.class);</span>
+
+    private final RestTemplate restTemplate;
+    private final String viacepUrl;
+
+    public CepLookupService(RestTemplate restTemplate,
+<span class="nc" id="L29">                            @Value(&quot;${viacep.api.url}&quot;) String viacepUrl) {</span>
+<span class="nc" id="L30">        this.restTemplate = restTemplate;</span>
+<span class="nc" id="L31">        this.viacepUrl = viacepUrl;</span>
+<span class="nc" id="L32">    }</span>
+
+    /**
+     * Busca endereço por CEP na API ViaCEP.
+     * Conforme RF-10 seção 9.
+     *
+     * @param cep CEP com ou sem formatação
+     * @return EnderecoInfo com logradouro, bairro, localidade, uf
+     * @throws CepInvalidoException se o formato do CEP for inválido
+     * @throws CepNaoEncontradoException se o CEP não for encontrado
+     * @throws ApiIndisponivelException se a API estiver indisponível
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public EnderecoInfo buscarPorCep(String cep) {
+<span class="nc" id="L46">        String cepLimpo = cep.replaceAll(&quot;[^0-9]&quot;, &quot;&quot;);</span>
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (cepLimpo.length() != 8) {</span>
+<span class="nc" id="L49">            throw new CepInvalidoException(&quot;CEP deve ter 8 dígitos&quot;);</span>
+        }
+
+        try {
+<span class="nc" id="L53">            log.info(&quot;Consultando CEP {} na API ViaCEP&quot;, cepLimpo);</span>
+<span class="nc" id="L54">            String url = viacepUrl + cepLimpo + &quot;/json/&quot;;</span>
+
+<span class="nc" id="L56">            Map&lt;String, Object&gt; body = restTemplate.getForObject(url, Map.class);</span>
+
+<span class="nc bnc" id="L58" title="All 4 branches missed.">            if (body == null || body.containsKey(&quot;erro&quot;)) {</span>
+<span class="nc" id="L59">                throw new CepNaoEncontradoException(&quot;CEP não encontrado&quot;);</span>
+            }
+
+<span class="nc" id="L62">            return new EnderecoInfo(</span>
+<span class="nc" id="L63">                (String) body.get(&quot;logradouro&quot;),</span>
+<span class="nc" id="L64">                (String) body.get(&quot;bairro&quot;),</span>
+<span class="nc" id="L65">                (String) body.get(&quot;localidade&quot;),</span>
+<span class="nc" id="L66">                (String) body.get(&quot;uf&quot;)</span>
+            );
+<span class="nc" id="L68">        } catch (RestClientException e) {</span>
+<span class="nc" id="L69">            log.error(&quot;Erro ao consultar API ViaCEP: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L70">            throw new ApiIndisponivelException(&quot;Serviço de CEP indisponível&quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

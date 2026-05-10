@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Book.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Biblioteca Pessoal</a> &gt; <a href="index.source.html" class="el_package">com.biblioteca.model</a> &gt; <span class="el_source">Book.java</span></div><h1>Book.java</h1><pre class="source lang-java linenums">package com.biblioteca.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+
+/**
+ * Entidade Livro — documento MongoDB.
+ * Cada livro pertence a um único usuário (RF-04 RN-06).
+ * Conforme RF-04 seção 9.
+ */
+@Document(&quot;books&quot;)
+@CompoundIndexes({
+    @CompoundIndex(def = &quot;{'userId': 1}&quot;, name = &quot;idx_userId&quot;),
+    @CompoundIndex(def = &quot;{'userId': 1, 'titulo': 1}&quot;, name = &quot;idx_userId_titulo&quot;)
+})
+public class Book {
+
+    @Id
+    private String id;
+
+    private String userId;
+
+    private String titulo;
+
+    private String autor;
+
+    private String isbn;
+
+    private String genero;
+
+    private Integer anoPublicacao;
+
+    private StatusLeitura statusLeitura;
+
+    private LocalDateTime dataCadastro;
+
+    private LocalDateTime dataAtualizacao;
+
+<span class="fc" id="L43">    public Book() {</span>
+<span class="fc" id="L44">    }</span>
+
+<span class="fc" id="L46">    public Book(String titulo, String autor, String isbn) {</span>
+<span class="fc" id="L47">        this.titulo = titulo;</span>
+<span class="fc" id="L48">        this.autor = autor;</span>
+<span class="fc" id="L49">        this.isbn = isbn;</span>
+<span class="fc" id="L50">        this.dataCadastro = LocalDateTime.now();</span>
+<span class="fc" id="L51">        this.dataAtualizacao = LocalDateTime.now();</span>
+<span class="fc" id="L52">    }</span>
+
+    // --- Getters e Setters ---
+
+    public String getId() {
+<span class="fc" id="L57">        return id;</span>
+    }
+
+    public void setId(String id) {
+<span class="fc" id="L61">        this.id = id;</span>
+<span class="fc" id="L62">    }</span>
+
+    public String getUserId() {
+<span class="fc" id="L65">        return userId;</span>
+    }
+
+    public void setUserId(String userId) {
+<span class="fc" id="L69">        this.userId = userId;</span>
+<span class="fc" id="L70">    }</span>
+
+    public String getTitulo() {
+<span class="fc" id="L73">        return titulo;</span>
+    }
+
+    public void setTitulo(String titulo) {
+<span class="fc" id="L77">        this.titulo = titulo;</span>
+<span class="fc" id="L78">    }</span>
+
+    public String getAutor() {
+<span class="nc" id="L81">        return autor;</span>
+    }
+
+    public void setAutor(String autor) {
+<span class="fc" id="L85">        this.autor = autor;</span>
+<span class="fc" id="L86">    }</span>
+
+    public String getIsbn() {
+<span class="nc" id="L89">        return isbn;</span>
+    }
+
+    public void setIsbn(String isbn) {
+<span class="fc" id="L93">        this.isbn = isbn;</span>
+<span class="fc" id="L94">    }</span>
+
+    public String getGenero() {
+<span class="nc" id="L97">        return genero;</span>
+    }
+
+    public void setGenero(String genero) {
+<span class="fc" id="L101">        this.genero = genero;</span>
+<span class="fc" id="L102">    }</span>
+
+    public Integer getAnoPublicacao() {
+<span class="nc" id="L105">        return anoPublicacao;</span>
+    }
+
+    public void setAnoPublicacao(Integer anoPublicacao) {
+<span class="fc" id="L109">        this.anoPublicacao = anoPublicacao;</span>
+<span class="fc" id="L110">    }</span>
+
+    public StatusLeitura getStatusLeitura() {
+<span class="fc" id="L113">        return statusLeitura;</span>
+    }
+
+    public void setStatusLeitura(StatusLeitura statusLeitura) {
+<span class="fc" id="L117">        this.statusLeitura = statusLeitura;</span>
+<span class="fc" id="L118">    }</span>
+
+    public LocalDateTime getDataCadastro() {
+<span class="fc" id="L121">        return dataCadastro;</span>
+    }
+
+    public void setDataCadastro(LocalDateTime dataCadastro) {
+<span class="fc" id="L125">        this.dataCadastro = dataCadastro;</span>
+<span class="fc" id="L126">    }</span>
+
+    public LocalDateTime getDataAtualizacao() {
+<span class="fc" id="L129">        return dataAtualizacao;</span>
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+<span class="fc" id="L133">        this.dataAtualizacao = dataAtualizacao;</span>
+<span class="fc" id="L134">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

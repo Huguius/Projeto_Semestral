@@ -1,0 +1,19 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/biblioteca-pessoal
+      database: biblioteca-pessoal
+
+  thymeleaf:
+    cache: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+      timeout: 30m
+
+viacep:
+  api:
+    url: https://viacep.com.br/ws/

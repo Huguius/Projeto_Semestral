@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Livros — Biblioteca Pessoal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/books}">📚 Biblioteca Pessoal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link active" th:href="@{/books}"><i class="bi bi-book"></i> Meus Livros</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/books/new}"><i class="bi bi-plus-circle"></i> Novo Livro</a></li>
+            </ul>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Sair</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+    <!-- Flash messages -->
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Minha Biblioteca</h1>
+        <a th:href="@{/books/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Novo Livro
+        </a>
+    </div>
+
+    <!-- Barra de busca (RF-06) -->
+    <form th:action="@{/books}" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" th:value="${query}"
+                   placeholder="Buscar por título, autor ou gênero...">
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+            <a th:href="@{/books}" class="btn btn-outline-secondary" th:if="${query}">
+                <i class="bi bi-x-lg"></i> Limpar
+            </a>
+        </div>
+    </form>
+
+    <!-- Biblioteca vazia (RF-05 CA-04) -->
+    <div th:if="${#lists.isEmpty(books)}" class="text-center py-5">
+        <h3 class="text-muted">📚 Sua biblioteca está vazia.</h3>
+        <p class="text-muted" th:if="${query}">Nenhum livro encontrado para sua busca.</p>
+        <p class="text-muted" th:unless="${query}">Cadastre seu primeiro livro!</p>
+        <a th:href="@{/books/new}" class="btn btn-primary mt-2" th:unless="${query}">
+            <i class="bi bi-plus-circle"></i> Cadastrar primeiro livro
+        </a>
+    </div>
+
+    <!-- Tabela de livros (RF-05 seção 7) -->
+    <div th:unless="${#lists.isEmpty(books)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Gênero</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="livro : ${books}">
+                    <td th:text="${livro.titulo}"></td>
+                    <td th:text="${livro.autor}"></td>
+                    <td th:text="${livro.genero ?: '—'}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${livro.statusLeitura.name() == 'QUERO_LER'} ? 'bg-info' :
+                                              (${livro.statusLeitura.name() == 'LENDO'} ? 'bg-warning text-dark' : 'bg-success')"
+                              th:text="${livro.statusLeitura.descricao}"></span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a th:href="@{/books/{id}(id=${livro.id})}" class="btn btn-outline-primary"
+                               title="Detalhes"><i class="bi bi-eye"></i></a>
+                            <a th:href="@{/books/{id}/edit(id=${livro.id})}" class="btn btn-outline-warning"
+                               title="Editar"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/books/{id}/delete(id=${livro.id})}" method="post" class="d-inline"
+                                  onsubmit="return confirm('Deseja realmente excluir este livro?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

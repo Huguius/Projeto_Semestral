@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Biblioteca Pessoal</a> &gt; <a href="index.source.html" class="el_package">com.biblioteca.dto</a> &gt; <span class="el_source">UserDTO.java</span></div><h1>UserDTO.java</h1><pre class="source lang-java linenums">package com.biblioteca.dto;
+
+/**
+ * DTO para transferência de dados do formulário de cadastro de usuário.
+ * Conforme RF-01.
+ */
+public class UserDTO {
+
+    private String nome;
+    private String email;
+    private String senha;
+    private String confirmacaoSenha;
+    private String cep;
+    private String logradouro;
+    private String bairro;
+    private String cidade;
+    private String uf;
+    private String numero;
+    private String complemento;
+
+<span class="fc" id="L21">    public UserDTO() {</span>
+<span class="fc" id="L22">    }</span>
+
+    // --- Getters e Setters ---
+
+    public String getNome() {
+<span class="fc" id="L27">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="fc" id="L31">        this.nome = nome;</span>
+<span class="fc" id="L32">    }</span>
+
+    public String getEmail() {
+<span class="fc" id="L35">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="fc" id="L39">        this.email = email;</span>
+<span class="fc" id="L40">    }</span>
+
+    public String getSenha() {
+<span class="fc" id="L43">        return senha;</span>
+    }
+
+    public void setSenha(String senha) {
+<span class="fc" id="L47">        this.senha = senha;</span>
+<span class="fc" id="L48">    }</span>
+
+    public String getConfirmacaoSenha() {
+<span class="fc" id="L51">        return confirmacaoSenha;</span>
+    }
+
+    public void setConfirmacaoSenha(String confirmacaoSenha) {
+<span class="fc" id="L55">        this.confirmacaoSenha = confirmacaoSenha;</span>
+<span class="fc" id="L56">    }</span>
+
+    public String getCep() {
+<span class="fc" id="L59">        return cep;</span>
+    }
+
+    public void setCep(String cep) {
+<span class="fc" id="L63">        this.cep = cep;</span>
+<span class="fc" id="L64">    }</span>
+
+    public String getLogradouro() {
+<span class="fc" id="L67">        return logradouro;</span>
+    }
+
+    public void setLogradouro(String logradouro) {
+<span class="nc" id="L71">        this.logradouro = logradouro;</span>
+<span class="nc" id="L72">    }</span>
+
+    public String getBairro() {
+<span class="fc" id="L75">        return bairro;</span>
+    }
+
+    public void setBairro(String bairro) {
+<span class="nc" id="L79">        this.bairro = bairro;</span>
+<span class="nc" id="L80">    }</span>
+
+    public String getCidade() {
+<span class="fc" id="L83">        return cidade;</span>
+    }
+
+    public void setCidade(String cidade) {
+<span class="nc" id="L87">        this.cidade = cidade;</span>
+<span class="nc" id="L88">    }</span>
+
+    public String getUf() {
+<span class="fc" id="L91">        return uf;</span>
+    }
+
+    public void setUf(String uf) {
+<span class="nc" id="L95">        this.uf = uf;</span>
+<span class="nc" id="L96">    }</span>
+
+    public String getNumero() {
+<span class="fc" id="L99">        return numero;</span>
+    }
+
+    public void setNumero(String numero) {
+<span class="nc" id="L103">        this.numero = numero;</span>
+<span class="nc" id="L104">    }</span>
+
+    public String getComplemento() {
+<span class="fc" id="L107">        return complemento;</span>
+    }
+
+    public void setComplemento(String complemento) {
+<span class="nc" id="L111">        this.complemento = complemento;</span>
+<span class="nc" id="L112">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
