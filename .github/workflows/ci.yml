@@ -31,32 +31,4 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco/
 
-  sonar:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: maven
-
-      - name: Build e Análise Sonar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
-          mvn verify sonar:sonar -B
-          -Dsonar.projectKey=Huguius_Projeto_Semestral
-          -Dsonar.organization=1projeto
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.token=$SONAR_TOKEN
 
