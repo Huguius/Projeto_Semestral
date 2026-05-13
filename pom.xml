@@ -14,7 +14,7 @@
     <groupId>com.biblioteca</groupId>
     <artifactId>biblioteca-pessoal</artifactId>
     <version>1.0.0</version>
-    <name>Biblioteca Pessoal</name>
+    <name>Projeto_Semestral</name>
     <description>Aplicação web para gerenciamento de biblioteca pessoal com autenticação — Projeto de Qualidade de Software</description>
 
     <properties>
