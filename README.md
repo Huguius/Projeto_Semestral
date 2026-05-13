@@ -15,8 +15,8 @@ Aplicação web para gerenciamento de biblioteca pessoal com autenticação, cad
 | API Externa | ViaCEP (consulta de CEP) |
 | Testes | JUnit 5, Testcontainers, WireMock, MockMvc, Mockito |
 | Cobertura | JaCoCo (≥ 80% — atingido **99.3%**) |
-| CI/CD | GitHub Actions |
-| Análise Estática | SonarCloud |
+| CI/CD | GitHub Actions (build + testes) |
+| Análise Estática | SonarCloud (Automatic Analysis) |
 
 ## 📋 Pré-requisitos
 
@@ -95,11 +95,22 @@ src/
 | Métrica | Meta | Resultado | Ferramenta |
 |---------|------|-----------|-----------|
 | Cobertura de código | ≥ 80% | **99.3%** | JaCoCo |
-| Quality Gate | Aprovado | — | SonarCloud |
+| Quality Gate | Aprovado | ✅ | SonarCloud |
 | Rastreabilidade | 100% dos RFs | ✅ | [RTM.md](docs/RTM.md) |
 | Total de testes | — | 114 testes | JUnit 5 |
 
 > **Nota:** Classes de infraestrutura (`BibliotecaApplication`, `SecurityConfig`, `WebClientConfig`) são excluídas da contagem do JaCoCo por serem configuração pura sem lógica de negócio.
+
+### Pipeline de Verificação
+
+O projeto utiliza **duas verificações automáticas independentes** a cada push:
+
+| Verificação | Ferramenta | Responsabilidade |
+|---|---|---|
+| **CI** | GitHub Actions | Build, testes (Testcontainers + WireMock), cobertura JaCoCo ≥ 80% |
+| **Análise estática** | SonarCloud (Automatic Analysis) | Bugs, code smells, vulnerabilidades, Quality Gate |
+
+> O SonarCloud opera com **Automatic Analysis** habilitado, analisando o código diretamente do repositório de forma independente do CI.
 
 ## 📖 Documentação
 

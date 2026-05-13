@@ -27,27 +27,44 @@ O projeto deve ter um **pipeline automatizado** que executa build, testes e aná
 
 ---
 
-## 3. Fluxo do Pipeline
+## 3. Arquitetura de Verificação
+
+O projeto utiliza **duas verificações independentes e automáticas** que rodam em paralelo a cada push:
 
 ```mermaid
-flowchart LR
-    A[👨‍💻 Push / PR] --> B[📦 Checkout<br/>actions/checkout]
-    B --> C[☕ Setup Java 17<br/>actions/setup-java]
-    C --> D[🔨 Build<br/>mvn compile]
-    D --> E[🧪 Testes<br/>mvn verify<br/>Testcontainers + WireMock]
-    E --> F[📊 JaCoCo Report<br/>Cobertura ≥ 80%]
-    F --> G[🔍 SonarCloud<br/>Quality Gate]
-    G -->|Pass ✅| H[✅ Pipeline Verde]
-    G -->|Fail ❌| I[❌ Pipeline Vermelho<br/>PR bloqueado]
+flowchart TD
+    A[👨‍💻 Push / PR] --> B[GitHub Actions - CI]
+    A --> C[SonarCloud - Análise Automática]
+
+    subgraph CI ["GitHub Actions"]
+        B --> D[📦 Checkout]
+        D --> E[☕ Setup Java 17]
+        E --> F[🧪 mvn verify<br/>Testes + Testcontainers + WireMock]
+        F --> G[📊 JaCoCo Report<br/>Cobertura ≥ 80%]
+        G --> H[📤 Upload Artefato]
+    end
+
+    subgraph Sonar ["SonarCloud Automatic Analysis"]
+        C --> I[🔍 Análise de código<br/>Bugs, Smells, Vulnerabilidades]
+        I --> J[✅ Quality Gate]
+    end
 ```
+
+| Responsabilidade | Quem executa | Disparador |
+|---|---|---|
+| Build, testes, cobertura (JaCoCo ≥ 80%) | **GitHub Actions** (CI) | Push / PR |
+| Análise estática (bugs, smells, segurança) | **SonarCloud** (Automático) | Push |
+
+> [!NOTE]
+> O SonarCloud utiliza **Automatic Analysis**, que analisa o código diretamente do repositório sem necessidade de um job separado no CI. Isso evita conflitos entre análise CI-based e automática, além de simplificar o pipeline.
 
 ---
 
-## 4. Configuração Completa — ci.yml
+## 4. Configuração — ci.yml (GitHub Actions)
 
 ```yaml
 # .github/workflows/ci.yml
-name: CI Pipeline
+name: CI — Biblioteca Pessoal
 
 on:
   push:
@@ -60,39 +77,61 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Necessário para SonarCloud
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          cache: maven
 
-      - name: Build & Test (Testcontainers + WireMock)
-        run: mvn clean verify
+      - name: Build e Testes
+        run: mvn verify -B -q
 
-      - name: SonarCloud Analysis
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Upload JaCoCo Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+```
+
+### Configuração — SonarCloud (Automatic Analysis)
+
+A análise do SonarCloud é configurada diretamente no painel do SonarCloud com **Automatic Analysis habilitado** (Administration → Analysis Method). O arquivo `sonar-project.properties` na raiz do projeto define os parâmetros:
+
+```properties
+sonar.projectKey=Huguius_Projeto_Semestral
+sonar.organization=1projeto
+sonar.sources=src/main/java,src/main/resources
+sonar.tests=src/test/java
+sonar.java.binaries=target/classes
+sonar.sourceEncoding=UTF-8
+sonar.java.source=17
 ```
 
 ---
 
 ## 5. Dependências do Pipeline
 
+### GitHub Actions (CI)
+
 | Passo | Depende de | Ferramenta |
 |-------|-----------|------------|
 | Build | Java 17 + Maven | `actions/setup-java` |
 | Testes de integração | Docker (para Testcontainers) | `ubuntu-latest` já inclui Docker |
-| Testes VCR | Cassettes WireMock em `src/test/resources/wiremock/` | Arquivos versionados no Git |
-| Cobertura | Plugin JaCoCo no `pom.xml` | `jacoco-maven-plugin` |
-| Qualidade | Projeto configurado no SonarCloud + token | `SONAR_TOKEN` secret |
+| Testes WireMock | WireMock standalone (in-memory) | Dependência no `pom.xml` |
+| Cobertura | Plugin JaCoCo no `pom.xml` | `jacoco-maven-plugin` (≥ 80%) |
+
+### SonarCloud (Automatic Analysis)
+
+| Passo | Depende de | Configuração |
+|-------|-----------|------------|
+| Análise automática | Automatic Analysis habilitado | SonarCloud → Administration → Analysis Method |
+| Parâmetros | `sonar-project.properties` na raiz | Versionado no Git |
+| Templates Thymeleaf | `src/main/resources` em `sonar.sources` | Detecta vulnerabilidades XSS |
 
 ---
 
