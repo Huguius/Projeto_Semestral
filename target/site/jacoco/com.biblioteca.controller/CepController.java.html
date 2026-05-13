@@ -25,9 +25,9 @@ public class CepController {
 
     private final CepLookupService cepLookupService;
 
-<span class="nc" id="L28">    public CepController(CepLookupService cepLookupService) {</span>
-<span class="nc" id="L29">        this.cepLookupService = cepLookupService;</span>
-<span class="nc" id="L30">    }</span>
+<span class="fc" id="L28">    public CepController(CepLookupService cepLookupService) {</span>
+<span class="fc" id="L29">        this.cepLookupService = cepLookupService;</span>
+<span class="fc" id="L30">    }</span>
 
     /**
      * Busca endereço por CEP.
@@ -38,17 +38,17 @@ public class CepController {
     @GetMapping(&quot;/{cep}&quot;)
     public ResponseEntity&lt;?&gt; buscarCep(@PathVariable String cep) {
         try {
-<span class="nc" id="L41">            EnderecoInfo endereco = cepLookupService.buscarPorCep(cep);</span>
-<span class="nc" id="L42">            return ResponseEntity.ok(endereco);</span>
-<span class="nc" id="L43">        } catch (CepInvalidoException e) {</span>
-<span class="nc" id="L44">            return ResponseEntity.badRequest()</span>
-<span class="nc" id="L45">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
-<span class="nc" id="L46">        } catch (CepNaoEncontradoException e) {</span>
-<span class="nc" id="L47">            return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
-<span class="nc" id="L48">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
-<span class="nc" id="L49">        } catch (ApiIndisponivelException e) {</span>
-<span class="nc" id="L50">            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)</span>
-<span class="nc" id="L51">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
+<span class="fc" id="L41">            EnderecoInfo endereco = cepLookupService.buscarPorCep(cep);</span>
+<span class="fc" id="L42">            return ResponseEntity.ok(endereco);</span>
+<span class="fc" id="L43">        } catch (CepInvalidoException e) {</span>
+<span class="fc" id="L44">            return ResponseEntity.badRequest()</span>
+<span class="fc" id="L45">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
+<span class="fc" id="L46">        } catch (CepNaoEncontradoException e) {</span>
+<span class="fc" id="L47">            return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L48">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
+<span class="fc" id="L49">        } catch (ApiIndisponivelException e) {</span>
+<span class="fc" id="L50">            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)</span>
+<span class="fc" id="L51">                .body(Map.of(&quot;mensagem&quot;, e.getMessage()));</span>
         }
     }
 }

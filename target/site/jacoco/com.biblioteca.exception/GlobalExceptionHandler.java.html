@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Centraliza o tratamento de erros conforme RNF-08 seção 5.3.
  */
 @ControllerAdvice
-<span class="nc" id="L17">public class GlobalExceptionHandler {</span>
+<span class="fc" id="L17">public class GlobalExceptionHandler {</span>
 
-<span class="nc" id="L19">    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);</span>
+<span class="fc" id="L19">    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);</span>
 
     /**
      * Trata livro não encontrado → página 404.
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
     @ExceptionHandler(LivroNaoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(LivroNaoEncontradoException ex, Model model) {
-<span class="nc" id="L27">        log.warn(&quot;Recurso não encontrado: {}&quot;, ex.getMessage());</span>
-<span class="nc" id="L28">        model.addAttribute(&quot;erro&quot;, ex.getMessage());</span>
-<span class="nc" id="L29">        return &quot;error/404&quot;;</span>
+<span class="fc" id="L27">        log.warn(&quot;Recurso não encontrado: {}&quot;, ex.getMessage());</span>
+<span class="fc" id="L28">        model.addAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="fc" id="L29">        return &quot;error/404&quot;;</span>
     }
 
     /**
@@ -35,9 +35,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDenied(AccessDeniedException ex, Model model) {
-<span class="nc" id="L38">        log.warn(&quot;Acesso negado: {}&quot;, ex.getMessage());</span>
-<span class="nc" id="L39">        model.addAttribute(&quot;erro&quot;, &quot;Você não tem permissão para acessar este recurso.&quot;);</span>
-<span class="nc" id="L40">        return &quot;error/403&quot;;</span>
+<span class="fc" id="L38">        log.warn(&quot;Acesso negado: {}&quot;, ex.getMessage());</span>
+<span class="fc" id="L39">        model.addAttribute(&quot;erro&quot;, &quot;Você não tem permissão para acessar este recurso.&quot;);</span>
+<span class="fc" id="L40">        return &quot;error/403&quot;;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

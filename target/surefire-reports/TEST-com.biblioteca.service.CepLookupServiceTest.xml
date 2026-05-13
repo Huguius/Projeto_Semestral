@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.biblioteca.exception.GlobalExceptionHandlerTest" time="0.009" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.biblioteca.service.CepLookupServiceTest" time="0.911" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -59,12 +59,27 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="deveRetornar403ParaAccessDenied" classname="com.biblioteca.exception.GlobalExceptionHandlerTest" time="0.001">
-    <system-out><![CDATA[22:35:48.519 [main] WARN com.biblioteca.exception.GlobalExceptionHandler -- Acesso negado: Proibido
+  <testcase name="deveLancarExcecaoParaBodyNull" classname="com.biblioteca.service.CepLookupServiceTest" time="0.831">
+    <system-out><![CDATA[22:35:50.816 [main] INFO com.biblioteca.service.CepLookupService -- Consultando CEP 99999999 na API ViaCEP
 ]]></system-out>
   </testcase>
-  <testcase name="deveRetornar404ParaLivroNaoEncontrado" classname="com.biblioteca.exception.GlobalExceptionHandlerTest" time="0.002">
-    <system-out><![CDATA[22:35:48.522 [main] WARN com.biblioteca.exception.GlobalExceptionHandler -- Recurso não encontrado: Não encontrado
+  <testcase name="deveAceitarCepComHifen" classname="com.biblioteca.service.CepLookupServiceTest" time="0.005">
+    <system-out><![CDATA[22:35:50.824 [main] INFO com.biblioteca.service.CepLookupService -- Consultando CEP 01001000 na API ViaCEP
+]]></system-out>
+  </testcase>
+  <testcase name="deveLancarExcecaoParaBodyComErro" classname="com.biblioteca.service.CepLookupServiceTest" time="0.005">
+    <system-out><![CDATA[22:35:50.829 [main] INFO com.biblioteca.service.CepLookupService -- Consultando CEP 99999999 na API ViaCEP
+]]></system-out>
+  </testcase>
+  <testcase name="deveLancarExcecaoParaCepCurto" classname="com.biblioteca.service.CepLookupServiceTest" time="0.014"/>
+  <testcase name="deveLancarExcecaoParaCepLongo" classname="com.biblioteca.service.CepLookupServiceTest" time="0.005"/>
+  <testcase name="deveRetornarEnderecoParaCepValido" classname="com.biblioteca.service.CepLookupServiceTest" time="0.019">
+    <system-out><![CDATA[22:35:50.874 [main] INFO com.biblioteca.service.CepLookupService -- Consultando CEP 01001000 na API ViaCEP
+]]></system-out>
+  </testcase>
+  <testcase name="deveLancarExcecaoParaErroDeRede" classname="com.biblioteca.service.CepLookupServiceTest" time="0.015">
+    <system-out><![CDATA[22:35:50.893 [main] INFO com.biblioteca.service.CepLookupService -- Consultando CEP 01001000 na API ViaCEP
+22:35:50.896 [main] ERROR com.biblioteca.service.CepLookupService -- Erro ao consultar API ViaCEP: Connection refused
 ]]></system-out>
   </testcase>
 </testsuite>

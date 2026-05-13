@@ -16,6 +16,7 @@ com\biblioteca\service\BookServiceTest$CriarLivro.class
 com\biblioteca\service\BookServiceTest$BuscarPorId.class
 com\biblioteca\service\UserServiceTest.class
 com\biblioteca\service\BookServiceTest$AtualizarLivro.class
+com\biblioteca\service\CepLookupServiceTest.class
 com\biblioteca\dto\DtoTest.class
 com\biblioteca\service\BookValidationParamTest.class
 com\biblioteca\AbstractIntegrationTest.class

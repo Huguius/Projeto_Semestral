@@ -55,20 +55,20 @@ public class AuthController {
                             Model model,
                             RedirectAttributes redirectAttributes) {
         try {
-<span class="nc" id="L58">            userService.registrar(userDTO);</span>
-<span class="nc" id="L59">            log.info(&quot;Usuário registrado com sucesso: {}&quot;, userDTO.getEmail());</span>
-<span class="nc" id="L60">            redirectAttributes.addFlashAttribute(&quot;mensagem&quot;, &quot;Cadastro realizado com sucesso!&quot;);</span>
-<span class="nc" id="L61">            return &quot;redirect:/login?registered&quot;;</span>
-<span class="nc" id="L62">        } catch (EmailDuplicadoException e) {</span>
-<span class="nc" id="L63">            log.warn(&quot;Tentativa de cadastro com email duplicado: {}&quot;, userDTO.getEmail());</span>
-<span class="nc" id="L64">            model.addAttribute(&quot;erro&quot;, e.getMessage());</span>
-<span class="nc" id="L65">            model.addAttribute(&quot;userDTO&quot;, userDTO);</span>
-<span class="nc" id="L66">            return &quot;register&quot;;</span>
-<span class="nc" id="L67">        } catch (ValidationException e) {</span>
-<span class="nc" id="L68">            log.warn(&quot;Erro de validação no cadastro: {}&quot;, e.getErros());</span>
-<span class="nc" id="L69">            model.addAttribute(&quot;erros&quot;, e.getErros());</span>
-<span class="nc" id="L70">            model.addAttribute(&quot;userDTO&quot;, userDTO);</span>
-<span class="nc" id="L71">            return &quot;register&quot;;</span>
+<span class="fc" id="L58">            userService.registrar(userDTO);</span>
+<span class="fc" id="L59">            log.info(&quot;Usuário registrado com sucesso: {}&quot;, userDTO.getEmail());</span>
+<span class="fc" id="L60">            redirectAttributes.addFlashAttribute(&quot;mensagem&quot;, &quot;Cadastro realizado com sucesso!&quot;);</span>
+<span class="fc" id="L61">            return &quot;redirect:/login?registered&quot;;</span>
+<span class="fc" id="L62">        } catch (EmailDuplicadoException e) {</span>
+<span class="fc" id="L63">            log.warn(&quot;Tentativa de cadastro com email duplicado: {}&quot;, userDTO.getEmail());</span>
+<span class="fc" id="L64">            model.addAttribute(&quot;erro&quot;, e.getMessage());</span>
+<span class="fc" id="L65">            model.addAttribute(&quot;userDTO&quot;, userDTO);</span>
+<span class="fc" id="L66">            return &quot;register&quot;;</span>
+<span class="fc" id="L67">        } catch (ValidationException e) {</span>
+<span class="fc" id="L68">            log.warn(&quot;Erro de validação no cadastro: {}&quot;, e.getErros());</span>
+<span class="fc" id="L69">            model.addAttribute(&quot;erros&quot;, e.getErros());</span>
+<span class="fc" id="L70">            model.addAttribute(&quot;userDTO&quot;, userDTO);</span>
+<span class="fc" id="L71">            return &quot;register&quot;;</span>
         }
     }
 }

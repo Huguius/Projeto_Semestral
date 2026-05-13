@@ -13,8 +13,8 @@ Aplicação web para gerenciamento de biblioteca pessoal com autenticação, cad
 | Frontend | Thymeleaf + Bootstrap 5.3 |
 | Segurança | Spring Security + BCrypt |
 | API Externa | ViaCEP (consulta de CEP) |
-| Testes | JUnit 5, Testcontainers, WireMock, MockMvc |
-| Cobertura | JaCoCo (≥ 80%) |
+| Testes | JUnit 5, Testcontainers, WireMock, MockMvc, Mockito |
+| Cobertura | JaCoCo (≥ 80% — atingido **99.3%**) |
 | CI/CD | GitHub Actions |
 | Análise Estática | SonarCloud |
 
@@ -22,7 +22,7 @@ Aplicação web para gerenciamento de biblioteca pessoal com autenticação, cad
 
 - Java 17+
 - Maven 3.9+
-- Docker Desktop (para testes com Testcontainers)
+- Docker Desktop (para testes de integração com Testcontainers)
 
 ## 🚀 Como Executar
 
@@ -39,8 +39,13 @@ mvn spring-boot:run
 Acesse: **http://localhost:8080**
 
 ### 3. Rodar os testes
+
 ```bash
-mvn verify
+# Testes unitários + cobertura (sem Docker)
+mvn clean verify -DskipITs
+
+# Testes completos (unitários + integração — requer Docker)
+mvn clean verify
 ```
 
 O relatório de cobertura estará em `target/site/jacoco/index.html`.
@@ -51,7 +56,7 @@ O relatório de cobertura estará em `target/site/jacoco/index.html`.
 src/
 ├── main/java/com/biblioteca/
 │   ├── config/          # SecurityConfig, WebClientConfig
-│   ├── controller/      # AuthController, BookController, CepController
+│   ├── controller/      # AuthController, BookController, CepController, HomeController
 │   ├── dto/             # UserDTO, BookDTO, EnderecoInfo
 │   ├── exception/       # Exceções customizadas + GlobalExceptionHandler
 │   ├── model/           # User, Book, Endereco, StatusLeitura
@@ -62,20 +67,39 @@ src/
 │   ├── static/          # CSS, JS
 │   └── application.yml
 └── test/java/com/biblioteca/
-    ├── controller/      # AuthControllerTest, BookControllerTest
-    ├── repository/      # BookRepositoryIT, UserRepositoryIT
+    ├── controller/      # AuthControllerTest, AuthControllerRegisterTest,
+    │                    # BookControllerTest, CepControllerTest, HomeControllerTest
+    ├── dto/             # DtoTest (BookDTO, UserDTO, EnderecoInfo)
+    ├── exception/       # ExceptionTest, GlobalExceptionHandlerTest
+    ├── model/           # ModelTest (User, Book, Endereco, StatusLeitura)
+    ├── repository/      # BookRepositoryIT, UserRepositoryIT (Testcontainers)
     └── service/         # BookServiceTest, UserServiceTest, BookValidatorTest,
                          # BookValidationParamTest, CepFormatParamTest,
-                         # CepLookupServiceIT
+                         # CepLookupServiceTest, CepLookupServiceIT (WireMock)
 ```
+
+## 🧪 Tipos de Teste
+
+| Tipo | Quantidade | Ferramenta | Classes |
+|------|-----------|------------|---------|
+| Unitário (Service) | ~30 | JUnit 5 + Mockito | `BookServiceTest`, `UserServiceTest`, `BookValidatorTest`, `CepLookupServiceTest` |
+| Unitário (Controller) | ~20 | MockMvc standalone | `AuthControllerTest`, `AuthControllerRegisterTest`, `BookControllerTest`, `CepControllerTest`, `HomeControllerTest` |
+| Unitário (Model/DTO/Exception) | ~20 | JUnit 5 | `ModelTest`, `DtoTest`, `ExceptionTest`, `GlobalExceptionHandlerTest` |
+| Parametrizado | ~28 | `@ParameterizedTest` | `BookValidationParamTest`, `CepFormatParamTest` |
+| Integração (Testcontainers) | ~10 | Testcontainers + MongoDB | `BookRepositoryIT`, `UserRepositoryIT` |
+| Integração (WireMock) | ~6 | WireMock standalone | `CepLookupServiceIT` |
+| **Total** | **~114** | | |
 
 ## 📊 Qualidade
 
-| Métrica | Meta | Ferramenta |
-|---------|------|-----------|
-| Cobertura de código | ≥ 80% | JaCoCo |
-| Quality Gate | Aprovado | SonarCloud |
-| Rastreabilidade | 100% dos RFs | [RTM.md](docs/RTM.md) |
+| Métrica | Meta | Resultado | Ferramenta |
+|---------|------|-----------|-----------|
+| Cobertura de código | ≥ 80% | **99.3%** | JaCoCo |
+| Quality Gate | Aprovado | — | SonarCloud |
+| Rastreabilidade | 100% dos RFs | ✅ | [RTM.md](docs/RTM.md) |
+| Total de testes | — | 114 testes | JUnit 5 |
+
+> **Nota:** Classes de infraestrutura (`BibliotecaApplication`, `SecurityConfig`, `WebClientConfig`) são excluídas da contagem do JaCoCo por serem configuração pura sem lógica de negócio.
 
 ## 📖 Documentação
 

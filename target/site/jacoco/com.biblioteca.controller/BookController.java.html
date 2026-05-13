@@ -108,20 +108,20 @@ public class BookController {
     public String editarLivroForm(@PathVariable String id,
                                    @AuthenticationPrincipal User user,
                                    Model model) {
-<span class="nc" id="L111">        Book book = bookService.buscarPorId(id, user.getId());</span>
+<span class="fc" id="L111">        Book book = bookService.buscarPorId(id, user.getId());</span>
 
-<span class="nc" id="L113">        BookDTO dto = new BookDTO();</span>
-<span class="nc" id="L114">        dto.setTitulo(book.getTitulo());</span>
-<span class="nc" id="L115">        dto.setAutor(book.getAutor());</span>
-<span class="nc" id="L116">        dto.setIsbn(book.getIsbn());</span>
-<span class="nc" id="L117">        dto.setGenero(book.getGenero());</span>
-<span class="nc" id="L118">        dto.setAnoPublicacao(book.getAnoPublicacao());</span>
-<span class="nc" id="L119">        dto.setStatusLeitura(book.getStatusLeitura());</span>
+<span class="fc" id="L113">        BookDTO dto = new BookDTO();</span>
+<span class="fc" id="L114">        dto.setTitulo(book.getTitulo());</span>
+<span class="fc" id="L115">        dto.setAutor(book.getAutor());</span>
+<span class="fc" id="L116">        dto.setIsbn(book.getIsbn());</span>
+<span class="fc" id="L117">        dto.setGenero(book.getGenero());</span>
+<span class="fc" id="L118">        dto.setAnoPublicacao(book.getAnoPublicacao());</span>
+<span class="fc" id="L119">        dto.setStatusLeitura(book.getStatusLeitura());</span>
 
-<span class="nc" id="L121">        model.addAttribute(&quot;book&quot;, dto);</span>
-<span class="nc" id="L122">        model.addAttribute(&quot;bookId&quot;, book.getId());</span>
-<span class="nc" id="L123">        model.addAttribute(&quot;statusOptions&quot;, StatusLeitura.values());</span>
-<span class="nc" id="L124">        return &quot;books/form&quot;;</span>
+<span class="fc" id="L121">        model.addAttribute(&quot;book&quot;, dto);</span>
+<span class="fc" id="L122">        model.addAttribute(&quot;bookId&quot;, book.getId());</span>
+<span class="fc" id="L123">        model.addAttribute(&quot;statusOptions&quot;, StatusLeitura.values());</span>
+<span class="fc" id="L124">        return &quot;books/form&quot;;</span>
     }
 
     /**
@@ -138,12 +138,12 @@ public class BookController {
 <span class="fc" id="L138">            bookService.atualizarLivro(id, bookDTO, user.getId());</span>
 <span class="fc" id="L139">            redirectAttributes.addFlashAttribute(&quot;mensagem&quot;, &quot;Livro atualizado com sucesso!&quot;);</span>
 <span class="fc" id="L140">            return &quot;redirect:/books&quot;;</span>
-<span class="nc" id="L141">        } catch (ValidationException e) {</span>
-<span class="nc" id="L142">            model.addAttribute(&quot;book&quot;, bookDTO);</span>
-<span class="nc" id="L143">            model.addAttribute(&quot;bookId&quot;, id);</span>
-<span class="nc" id="L144">            model.addAttribute(&quot;erros&quot;, e.getErros());</span>
-<span class="nc" id="L145">            model.addAttribute(&quot;statusOptions&quot;, StatusLeitura.values());</span>
-<span class="nc" id="L146">            return &quot;books/form&quot;;</span>
+<span class="fc" id="L141">        } catch (ValidationException e) {</span>
+<span class="fc" id="L142">            model.addAttribute(&quot;book&quot;, bookDTO);</span>
+<span class="fc" id="L143">            model.addAttribute(&quot;bookId&quot;, id);</span>
+<span class="fc" id="L144">            model.addAttribute(&quot;erros&quot;, e.getErros());</span>
+<span class="fc" id="L145">            model.addAttribute(&quot;statusOptions&quot;, StatusLeitura.values());</span>
+<span class="fc" id="L146">            return &quot;books/form&quot;;</span>
         }
     }
 

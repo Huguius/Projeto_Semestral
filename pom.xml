@@ -109,6 +109,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/biblioteca/BibliotecaApplication.class</exclude>
+                        <exclude>com/biblioteca/config/SecurityConfig.class</exclude>
+                        <exclude>com/biblioteca/config/WebClientConfig.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

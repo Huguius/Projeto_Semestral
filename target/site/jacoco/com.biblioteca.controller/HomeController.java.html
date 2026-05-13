@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Redireciona para /books se autenticado, /login se não.
  */
 @Controller
-<span class="nc" id="L12">public class HomeController {</span>
+<span class="fc" id="L12">public class HomeController {</span>
 
     @GetMapping(&quot;/&quot;)
     public String home(Authentication authentication) {
-<span class="nc bnc" id="L16" title="All 4 branches missed.">        if (authentication != null &amp;&amp; authentication.isAuthenticated()) {</span>
-<span class="nc" id="L17">            return &quot;redirect:/books&quot;;</span>
+<span class="pc bpc" id="L16" title="1 of 4 branches missed.">        if (authentication != null &amp;&amp; authentication.isAuthenticated()) {</span>
+<span class="fc" id="L17">            return &quot;redirect:/books&quot;;</span>
         }
-<span class="nc" id="L19">        return &quot;redirect:/login&quot;;</span>
+<span class="fc" id="L19">        return &quot;redirect:/login&quot;;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

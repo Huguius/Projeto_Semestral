@@ -140,6 +140,35 @@ class BookControllerTest {
             .andExpect(model().attributeExists("erros"));
     }
 
+    @Test
+    @DisplayName("RF-07: GET /books/{id}/edit deve exibir formulário de edição pré-preenchido")
+    void deveExibirFormularioEdicao() throws Exception {
+        Book book = criarBook("abc", "1984", "George Orwell");
+        book.setIsbn("978-0451524935");
+        book.setGenero("Ficção Científica");
+        book.setAnoPublicacao(1949);
+        when(bookService.buscarPorId("abc", "user-123")).thenReturn(book);
+
+        mockMvc.perform(get("/books/abc/edit"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("books/form"))
+            .andExpect(model().attributeExists("book", "bookId", "statusOptions"));
+    }
+
+    @Test
+    @DisplayName("RF-07: POST /books/{id}/edit com validação inválida deve exibir erros")
+    void deveMostrarErrosValidacaoAoAtualizar() throws Exception {
+        when(bookService.atualizarLivro(eq("abc"), any(), eq("user-123")))
+            .thenThrow(new ValidationException(List.of("Título é obrigatório")));
+
+        mockMvc.perform(post("/books/abc/edit")
+                .param("titulo", "")
+                .param("autor", ""))
+            .andExpect(status().isOk())
+            .andExpect(view().name("books/form"))
+            .andExpect(model().attributeExists("erros", "bookId"));
+    }
+
     private Book criarBook(String id, String titulo, String autor) {
         Book b = new Book(titulo, autor, null);
         b.setId(id);
